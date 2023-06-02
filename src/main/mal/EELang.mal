@@ -15,39 +15,135 @@
 #id: "org.mal-lang.eelang"
 #version: "0.0.1"
 
-category System {
-  asset Network {
-    | access
-      -> hosts.connect
-  }
+category ComputeResources {
 
-  asset Host {
-    | connect
-      -> access
-    | authenticate
-      -> access
-    | guessPassword
-      -> guessedPassword
-    | guessedPassword [Exponential(0.02)]
-      -> authenticate
-    & access
-  }
+        abstract asset Machine {
 
-  asset User {
-    | attemptPhishing
-      -> phish
-    | phish [Exponential(0.1)]
-      -> passwords.obtain
-  }
+            | internetAccessibleDevice
+                -> modifyControllerTasking
 
-  asset Password {
-    | obtain
-      -> host.authenticate
-  }
+			| modifyControllerTasking
+                -> installMalware
+
+            | installMalware
+
+            | unsecuredCredentials
+                -> modifyAuthenticationProcess
+
+            | modifyAuthenticationProcess
+                -> network.access,
+				   app.trustModification
+
+        }
+
+        abstract asset Application {
+
+			| trustModification
+
+        }
+}
+
+category Functional {
+
+        asset Substation {
+
+        }
+
+        asset ControlCenter {
+
+        }
+
+        asset PowerSystem {
+
+			| unstablePowerSystem
+
+        }
+}
+
+category Product {
+
+        asset IED extends Machine {
+
+            | installMalware
+                -> powerSystem.unstablePowerSystem
+
+        }
+
+        asset SCADA extends Machine {
+
+		}
+
+		asset MMSClient extends Application {
+
+        }
+
+		asset MMSServer extends Application {
+
+		    | unauthorizedCommandMessage
+                 -> powerSystem.unstablePowerSystem
+
+        }
+}
+
+category Communication {
+
+        asset Network {
+
+			| access
+			     ->  channel.networkSniffing,
+                     channel.adversaryInTheMiddle,
+                     channel.adversaryInTheMiddleOverTLS
+
+        }
+
+        asset Channel {
+
+            | networkSniffing
+        		 -> dataflow.read
+
+			| adversaryInTheMiddle [Exponential(1)]
+				 -> networkSniffing,
+					dataflow.read,
+					dataflow.write,
+					dataflow.delete
+
+			# tlsSet
+                 -> adversaryInTheMiddle,
+                    networkSniffing
+
+            | adversaryInTheMiddleOverTLS
+                 -> dataflow.read,
+                    dataflow.write,
+					dataflow.delete,
+					mmsServer.unauthorizedCommandMessage
+
+        }
+
+        asset Dataflow {
+
+            | read
+
+			| write
+
+			| delete
+
+        }
+
 }
 
 associations {
-  Network [networks] * <-- NetworkAccess --> * [hosts] Host
-  Host [host] 1 <-- Credentials --> * [passwords] Password
-  User [user] 1 <-- Credentials --> * [passwords] Password
+
+	Machine [machine] 1 <-- Executes --> * [app] Application
+	Machine [machine] * <-- Connects --> 1 [network] Network
+
+    Machine [machine] * <-- In --> 1 [powerSystem] PowerSystem
+    Application [app] * <-- In --> 1 [powerSystem] PowerSystem
+
+    IED [ied] 1 <-- Executes --> * [mmsServer] MMSServer
+    SCADA [scada] 1 <-- Executes --> * [mmsClient] MMSClient
+    Channel [channel] * <-- Crosses --> 1..* [network] Network
+    Channel [channel] 1 <-- Contains --> 1 [dataflow] Dataflow
+    Channel [channel] 1 <-- Client --> 1 [mmsClient] MMSClient
+    Channel [channel] 1 <-- Server --> 1 [mmsServer] MMSServer
+
 }
