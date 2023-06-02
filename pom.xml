@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright 2020-2022 Foreseeti AB <https://foreseeti.com>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -18,14 +17,14 @@ limitations under the License.
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.mal-lang</groupId>
-  <artifactId>examplelang</artifactId>
+  <artifactId>eelang</artifactId>
   <version>1.0.0</version>
   <packaging>jar</packaging>
 
-  <name>exampleLang</name>
-  <description>A MAL language that demonstrates the Maven project structure</description>
-  <url>https://github.com/mal-lang/exampleLang</url>
-  <inceptionYear>2020</inceptionYear>
+  <name>EELang</name>
+  <description>A MAL language for modelling attack paths in the Distributed Energy Resources environment</description>
+  <url>https://github.com/Dosclic98/EELang</url>
+  <inceptionYear>2023</inceptionYear>
   <organization>
     <name>MAL</name>
     <url>https://mal-lang.org</url>
