@@ -40,3 +40,6 @@ buildNumber.properties
 .factorypath
 .project
 .settings
+
+# User defined
+.idea
