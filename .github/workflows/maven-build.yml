@@ -36,4 +36,4 @@ jobs:
       run: ./tools/scripts/setup-malc.sh
 
     - name: malc Build
-      run: cd target && malc -i ../src/main/resources/icons -l ../LICENSE -n ../NOTICE ../src/main/mal/exampleLang.mal
+      run: cd target && malc -i ../src/main/resources/icons -l ../LICENSE -n ../NOTICE ../src/main/mal/EELang.mal
