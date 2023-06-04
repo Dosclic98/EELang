@@ -44,9 +44,9 @@ public class TestEELang {
     //Assertions
 
     channel.adversaryInTheMiddle.assertCompromisedWithEffort();
-    dataflow.read.assertCompromisedInstantaneously();
-    dataflow.write.assertCompromisedInstantaneously();
-    dataflow.delete.assertCompromisedInstantaneously();
+    dataflow.read.assertCompromisedWithEffort();
+    dataflow.write.assertCompromisedWithEffort();
+    dataflow.delete.assertCompromisedWithEffort();
 
   }
 
@@ -55,19 +55,24 @@ public class TestEELang {
 
     //Assets
     var network = new Network();
-    var channel = new Channel(true); // secure channel
+    var channel = new SecureChannel(); // secure channel with TLS (enabled by default)
     var dataflow = new Dataflow();
 
+    //Asset connection and attacker creation
+    network.addChannel(channel);
+    channel.addDataflow(dataflow);
+
     var attacker = new Attacker();
-    attacker.addAttackPoint(network.access);
+    attacker.addAttackPoint(network.accessSecured);
     attacker.attack();
 
     //Assertions
-
+    // The attack step adversaryInTheMiddle is not compromised
     channel.adversaryInTheMiddle.assertUncompromised();
-    dataflow.read.assertUncompromised();
-    dataflow.write.assertUncompromised();
-    dataflow.delete.assertUncompromised();
+    channel.adversaryInTheMiddleOverTLS.assertCompromisedWithEffort();
+    dataflow.read.assertCompromisedWithEffort();
+    dataflow.write.assertCompromisedWithEffort();
+    dataflow.delete.assertCompromisedWithEffort();
 
   }
 
@@ -78,7 +83,7 @@ public class TestEELang {
 
     var ied = new IED();
     var network = new Network();
-    var channel = new Channel(true);
+    var channel = new SecureChannel(false);
     var mmsServer = new MMSServer();
     var powerSystem = new PowerSystem();
 
@@ -95,10 +100,10 @@ public class TestEELang {
 
     //Assertions
     ied.modifyAuthenticationProcess.assertCompromisedInstantaneously();
-    network.access.assertCompromisedInstantaneously();
-    channel.adversaryInTheMiddleOverTLS.assertCompromisedInstantaneously();
-    mmsServer.unauthorizedCommandMessage.assertCompromisedInstantaneously();
-    powerSystem.unstablePowerSystem.assertCompromisedInstantaneously();
+    network.accessSecured.assertCompromisedInstantaneously();
+    channel.adversaryInTheMiddleOverTLS.assertCompromisedWithEffort();
+    mmsServer.unauthorizedCommandMessage.assertCompromisedWithEffort();
+    powerSystem.unstablePowerSystem.assertCompromisedWithEffort();
   }
 
   @Test
