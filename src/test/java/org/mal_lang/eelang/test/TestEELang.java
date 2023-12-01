@@ -44,7 +44,7 @@ public class TestEELang {
     //Assertions
 
     channel.adversaryInTheMiddle.assertCompromisedWithEffort();
-    dataflow.read.assertCompromisedWithEffort();
+    dataflow.read.assertCompromisedInstantaneously(); // Compromised instantaneously due to the path from networkSniffing
     dataflow.write.assertCompromisedWithEffort();
     dataflow.delete.assertCompromisedWithEffort();
 
